@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+        crossorigin="anonymous">
+
+    <title>{% block title %} {% endblock %}</title>
+
+    <style>
+        /* Your existing styles */
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .form-container {
+            width: 100vw;
+            height: 100vh;
+            background-color: #7b2cbf;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .upload-files-container {
+            background-color: #f7fff7;
+            width: 40%;
+            padding: 30px 60px;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            box-shadow: rgba(0, 0, 0, 0.24) 0px 10px 20px, rgba(0, 0, 0, 0.28) 0px 6px 6px;
+            margin: auto;
+            margin-top: 5%;
+            margin-bottom: 20px; /* Added margin-bottom for separation */
+        }
+
+        .drag-file-area {
+            border: 2px dashed #7b2cbf;
+            border-radius: 40px;
+            margin: 10px 0 15px;
+            padding: 30px 50px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .drag-file-area .upload-icon {
+            font-size: 50px;
+        }
+
+        .drag-file-area h3 {
+            font-size: 26px;
+            margin: 15px 0;
+        }
+
+        .drag-file-area label {
+            font-size: 19px;
+        }
+
+        .drag-file-area label .browse-files-text {
+            color: #7b2cbf;
+            font-weight: bolder;
+            cursor: pointer;
+        }
+
+        .browse-files span {
+            position: relative;
+            top: -25px;
+        }
+
+        .default-file-input {
+            opacity: 0;
+        }
+
+        .cannot-upload-message {
+            background-color: #ffc6c4;
+            font-size: 17px;
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+            padding: 5px 10px 5px 30px;
+            border-radius: 5px;
+            color: #BB0000;
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .cannot-upload-message span,
+        .upload-button-icon {
+            padding-right: 10px;
+        }
+
+        .cannot-upload-message span:last-child {
+            padding-left: 20px;
+            cursor: pointer;
+        }
+
+        .file-block {
+            color: #f7fff7;
+            background-color: #7b2cbf;
+            transition: all 1s;
+            width: 390px;
+            position: relative;
+            display: none;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0 15px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            font-size: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .file-icon {
+            margin-right: 10px;
+        }
+
+        .file-name{
+            padding: 0 3px;
+            color: black; /* Adjust the color as needed */
+            margin-top: 5px; /* Add margin for spacing */
+        }
+        .file-size {
+            padding: 0 3px;
+        }
+
+        .remove-file-icon {
+            cursor: pointer;
+        }
+
+        .progress-bar {
+            display: flex;
+            position: absolute;
+            bottom: 0;
+            left: 4.5%;
+            width: 0;
+            height: 5px;
+            border-radius: 25px;
+            background-color: #4BB543;
+        }
+
+        .upload-button {
+            font-family: 'Montserrat';
+            background-color: #808080; /* Grey color */
+            color: #000000; /* Black color */
+            display: flex;
+            align-items: center;
+            font-size: 18px;
+            border: none;
+            border-radius: 20px;
+            margin: 10px;
+            padding: 7.5px 50px;
+            cursor: pointer;
+        }
+
+        /* Result box styles */
+        .result-box {
+            background-color: #f7fff7;
+            border-radius: 40px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px, rgba(0, 0, 0, 0.19) 0px 3px 8px;
+            text-align: center;
+            width: 650px; /* Adjust the width as needed */
+            margin: auto; /* Center the box horizontally */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        {% block content %} {% endblock %}
+    </div>
+    <div class="file-upload-wrapper">
+
+        <form id="myForm" enctype="multipart/form-data">
+            <div class="upload-files-container">
+                <div class="drag-file-area">
+                    <span class="material-icons-outlined upload-icon"> File_Upload </span>
+                    <div class="mb-3">
+                        <label class="label">
+                            <span class="browse-files">
+                                <input type="file" name="cable-anomaly" id="input-file-now" class="file-upload" />
+                            </span>
+                        </label>
+                    </div>
+                </div>
+                <button onclick="submitLoginForm(event)" class="btn btn-primary" type="submit">Submit</button>
+            </div>
+        </form>
+
+        <!-- Result display area with the new result-box class -->
+        <div id="result-container" class="result-box"></div>
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js"
+        integrity="sha384-qlmct0AOBiA2VPZkMY3+2WqkHtIQ9lSdAsAn5RUJD/3vA5MKDgSGcdmIv4ycVxyn"
+        crossorigin="anonymous"></script>
+
+    <!-- ... (your existing code) ... -->
+
+    <script>
+        async function submitLoginForm(event) {
+            event.preventDefault();
+            const fileInput = document.getElementById('input-file-now');
+            const resultContainer = document.getElementById('result-container');
+    
+            // Clear previous result and header
+            resultContainer.innerHTML = '';
+    
+            // Add "Result" header
+            resultContainer.innerHTML += '<h2>Result</h2>';
+    
+            // Check if a file is selected
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const formData = new FormData();
+    
+                // Append the file with the appropriate key
+                formData.append('cable-anomaly', file);
+    
+                try {
+                    const response = await fetch('http://localhost:5000/api', {
+                        method: 'POST',
+                        body: formData,
+                    });
+    
+                    if (response.ok) {
+                        const resp = await response.json();
+                        // Display the result in the result container with dynamic color
+                        const resultText = resp.result === 'Good' ? '<span style="color: green;">GOOD : Correct Orientation of Cable</span>' : '<span style="color: red;">BAD : Incorrect Orientation of Cable</span>';
+                        resultContainer.innerHTML += `<p>${resultText}</p>`;
+                    } else {
+                        // Display error message
+                        resultContainer.innerHTML += '<p style="color: red;">Error: Wrong Credentials!!!!!!!!</p>';
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            } else {
+                console.error('No file selected.');
+            }
+        }
+    </script>    
+    </body>
+    </html>
